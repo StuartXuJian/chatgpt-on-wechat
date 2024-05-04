@@ -163,11 +163,27 @@ class ChatChannel(Channel):
             logger.info("[WX]receive unsupported message type: {}, content: {}, context: {}".format(context.type, context.content, context))
             # 如果消息是图片,将文本存到当前IMG目录
             if context.type == ContextType.IMAGE:
-                from PIL import Image
-                from common.tmp_dir import TmpDir
                 context.get("msg").prepare()
-                image_path = context.content
-                # 打开文件, 并保存到另一个目录
+                from docx import Document
+                from datetime import datetime
+
+                docx_file_path = 'record' + datetime.today().strftime('_%Y_%m_%d') + '.docx' 
+                image_file_path = context.content      # 替换为你的图片路径
+                # 创建或加载文档
+                document = Document(docx_file_path)
+                
+                # 插入图片
+                paragraph = document.add_paragraph()
+                run = paragraph.add_run()
+                run.add_picture(image_file_path)  # 设置图片宽度为1.25英寸
+                
+                # 保存文档
+                document.save(docx_file_path)
+                logger.info(f"图片已成功插入到文档：{docx_file_path}")
+
+                # 删除临时图片
+                os.remove(image_file_path)
+
 
         return context
 
