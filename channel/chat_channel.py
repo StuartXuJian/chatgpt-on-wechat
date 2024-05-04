@@ -28,6 +28,7 @@ class ChatChannel(Channel):
     lock = threading.Lock()  # 用于控制对sessions的访问
     ################## ################
     group_collect = True
+    collect_report = True
 
     def __init__(self):
         _thread = threading.Thread(target=self.consume)
@@ -107,8 +108,14 @@ class ChatChannel(Channel):
                 elif "stop" in context.content:
                     self.group_collect = False
                     reply_str = "#group_collect_stop执行成功!\n已停止群聊收集"
+                elif "闭嘴" in context.content:
+                    self.collect_report = False
+                    reply_str = "好的好的, 小的知道了!不说就是.(难搞)"
+                elif "开口" in context.content:
+                    self.collect_report = True
+                    reply_str = "大人英明! 我言论自由了!"
                 elif "help" in context.content:
-                    reply_str = "#group_collect_resume 恢复收集群信息\n#group_collect_stop 停止收集群信息\n#group_collect_help 显示帮助信息"
+                    reply_str = "#group_collect_resume 恢复收集群信息\n#group_collect_stop 停止收集群信息\n#group_collect_help 显示帮助信息\n#group_collect_闭嘴 不播报收集记录\n#group_collect_开口 播报收集记录"
                 else:
                     reply_str = f"你写了啥玩意呢, 识别不了!\n 你写的是{context.content}"
                 context.content = ""
@@ -213,9 +220,10 @@ class ChatChannel(Channel):
                 # 保存文档
                 document.save(docx_file_path)
                 logger.debug(f"图片已成功插入到文档：{docx_file_path}")
-                reply_str = f"已收录来自 @{nick_name} 的图片!"
-                reply_tmp = Reply(ReplyType.TEXT, reply_str)
-                self._send_reply(context, reply_tmp)
+                if self.collect_report:
+                    reply_str = f"已收录来自 @{nick_name} 的图片!"
+                    reply_tmp = Reply(ReplyType.TEXT, reply_str)
+                    self._send_reply(context, reply_tmp)
 
                 # 删除临时图片
                 os.remove(image_file_path)
