@@ -27,7 +27,7 @@ def main():
     )
 
     WEB_PORT = 18880
-    iface.launch(server_port=WEB_PORT)
+    iface.launch(server_port=WEB_PORT, share=True)
     print(f"http://localhost:{WEB_PORT} Started...")
 
 if __name__ == "__main__":
