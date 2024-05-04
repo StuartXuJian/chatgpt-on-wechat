@@ -101,14 +101,16 @@ class ChatChannel(Channel):
             
             if "#group_collect" in context.content:
                 logger.debug(f"[WX]wechat collect cmd: {content}")
-                if context.content == "#group_collect_resume":
+                if "resume" in context.content:
                     self.group_collect = True
                     reply_str = "#group_collect_resume执行成功!\n已恢复群收集"
-                elif context.content == "#group_collect_stop":
+                elif "stop" in context.content:
                     self.group_collect = False
                     reply_str = "#group_collect_stop执行成功!\n已停止群聊收集"
-                elif context.content == "#group_collect_help":
+                elif "help" in context.content:
                     reply_str = "#group_collect_resume 恢复收集群信息/n#group_collect_stop 停止收集群信息/n#group_collect_help 显示帮助信息"
+                else:
+                    reply_str = f"你写了啥玩意呢, 识别不了! {context.content}"
                 context.content = ""
                 reply_tmp = Reply(ReplyType.TEXT, reply_str)
                 self._send_reply(context, reply_tmp)
