@@ -27,7 +27,7 @@ class ChatChannel(Channel):
     sessions = {}  # 用于控制并发，每个session_id同时只能有一个context在处理
     lock = threading.Lock()  # 用于控制对sessions的访问
     ################## ################
-    group_collect_g = True
+    group_collect = True
 
     def __init__(self):
         _thread = threading.Thread(target=self.consume)
@@ -102,10 +102,10 @@ class ChatChannel(Channel):
             if context.content.startwith("#group_collect"):
                 logger.debug(f"[WX]wechat collect cmd: {content}")
                 if context.content == "#group_collect_resume":
-                    group_collect_g = True
+                    self.group_collect = True
                     reply_str = "已恢复群收集"
                 elif context.content == "#group_collect_stop":
-                    group_collect_g = False
+                    self.group_collect = False
                     reply_str = "已停止群聊收集"
                 elif content.content == "#group_collect_help":
                     reply_str = "#group_collect_resume 恢复收集群信息/n#group_collect_stop 停止收集群信息/n#group_collect_help 显示帮助信息"
@@ -178,7 +178,7 @@ class ChatChannel(Channel):
         else: ############# #############
             logger.debug("[WX]receive unsupported message type: {}, content: {}, context: {}".format(context.type, context.content, context))
             # 如果消息是图片,将文本存到当前IMG目录
-            if context.type == ContextType.IMAGE and group_collect_g:
+            if context.type == ContextType.IMAGE and self.group_collect:
                 context.get("msg").prepare()
                 from docx import Document
                 from docx.shared import Inches
