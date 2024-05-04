@@ -183,8 +183,10 @@ class ChatChannel(Channel):
                 
                 # 插入图片和发送者姓名
                 nick_name = str(cmsg.actual_user_nickname)
-                paragraph = document.add_paragraph(nick_name)
+                paragraph = document.add_paragraph()
                 run = paragraph.add_run(nick_name+"\n")
+                font = run.font
+                font.bold = True
                 run.add_picture(image_file_path)
                 
                 # 保存文档
