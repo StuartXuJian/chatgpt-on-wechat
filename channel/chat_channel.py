@@ -18,8 +18,6 @@ except Exception as e:
     pass
 
 handler_pool = ThreadPoolExecutor(max_workers=8)  # 处理消息的线程池
-################## ################
-group_collect = True
 
 # 抽象类, 它包含了与消息通道无关的通用处理逻辑
 class ChatChannel(Channel):
@@ -28,6 +26,8 @@ class ChatChannel(Channel):
     futures = {}  # 记录每个session_id提交到线程池的future对象, 用于重置会话时把没执行的future取消掉，正在执行的不会被取消
     sessions = {}  # 用于控制并发，每个session_id同时只能有一个context在处理
     lock = threading.Lock()  # 用于控制对sessions的访问
+    ################## ################
+    group_collect_g = True
 
     def __init__(self):
         _thread = threading.Thread(target=self.consume)
@@ -102,10 +102,10 @@ class ChatChannel(Channel):
             if context.content.startwith("#group_collect"):
                 logger.debug(f"[WX]wechat collect cmd: {content}")
                 if context.content == "#group_collect_resume":
-                    group_collect = True
+                    group_collect_g = True
                     reply_str = "已恢复群收集"
                 elif context.content == "#group_collect_stop":
-                    group_collect = False
+                    group_collect_g = False
                     reply_str = "已停止群聊收集"
                 elif content.content == "#group_collect_help":
                     reply_str = "#group_collect_resume 恢复收集群信息/n#group_collect_stop 停止收集群信息/n#group_collect_help 显示帮助信息"
@@ -178,7 +178,7 @@ class ChatChannel(Channel):
         else: ############# #############
             logger.debug("[WX]receive unsupported message type: {}, content: {}, context: {}".format(context.type, context.content, context))
             # 如果消息是图片,将文本存到当前IMG目录
-            if context.type == ContextType.IMAGE and group_collect:
+            if context.type == ContextType.IMAGE and group_collect_g:
                 context.get("msg").prepare()
                 from docx import Document
                 from docx.shared import Inches
