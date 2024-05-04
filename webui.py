@@ -27,7 +27,7 @@ def main():
         file_dropdown=gr.Dropdown(choices=files_list, label="选择文件"), 
         download_button = gr.DownloadButton("📂 点击下载")
 
-        download_button.click(fn=download_selected_file, inputs=file_dropdown, outputs=[file_dropdown,download_button])
+        download_button.click(download_selected_file, file_dropdown, outputs=[file_dropdown,download_button])
 
     print(f"http://localhost:{WEB_PORT} Started...")
     index.queue(concurrency_count=10).launch(server_name="0.0.0.0", server_port=WEB_PORT)
