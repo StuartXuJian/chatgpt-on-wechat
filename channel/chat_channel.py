@@ -165,6 +165,7 @@ class ChatChannel(Channel):
             if context.type == ContextType.IMAGE:
                 context.get("msg").prepare()
                 from docx import Document
+                from docx.shared import Inches
                 from datetime import datetime
 
                 cmsg = context["msg"]
@@ -187,7 +188,7 @@ class ChatChannel(Channel):
                 run = paragraph.add_run(nick_name+"\n")
                 font = run.font
                 font.bold = True
-                run.add_picture(image_file_path)
+                run.add_picture(image_file_path,width=Inches(6))
                 
                 # 保存文档
                 document.save(docx_file_path)
