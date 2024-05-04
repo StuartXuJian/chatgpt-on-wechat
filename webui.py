@@ -25,7 +25,7 @@ def main():
     with gr.Blocks(title=f"下载文件") as index:
 
         file_dropdown=gr.Dropdown(choices=files_list, label="选择文件"), 
-        download_button = gr.DownloadButton("📂 点击下载", value="")
+        download_button = gr.DownloadButton("📂 点击下载")
 
         download_button.click(fn=download_selected_file, inputs=file_dropdown, outputs=download_button)
 
