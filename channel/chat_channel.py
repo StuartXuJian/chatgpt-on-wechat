@@ -159,6 +159,15 @@ class ChatChannel(Channel):
         elif context.type == ContextType.VOICE:
             if "desire_rtype" not in context and conf().get("voice_reply_voice") and ReplyType.VOICE not in self.NOT_SUPPORT_REPLYTYPE:
                 context["desire_rtype"] = ReplyType.VOICE
+        else:
+            logger.info("[WX]receive unsupported message type: {}, content: {}, context: {}".format(context.type, context.content, context))
+            # 如果消息是图片,将文本存到当前IMG目录
+            if context.type == ContextType.IMAGE:
+                from PIL import Image
+                from common.tmp_dir import TmpDir
+                context.get("msg").prepare()
+                image_path = context.content
+                # 打开文件, 并保存到另一个目录
 
         return context
 
