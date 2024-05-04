@@ -167,7 +167,8 @@ class ChatChannel(Channel):
                 from docx import Document
                 from datetime import datetime
 
-                if context.get("isgroup", False):
+                # 仅接受群聊
+                if context.get("isgroup", True):
                     return context
 
                 cmsg = context["msg"]
@@ -184,7 +185,9 @@ class ChatChannel(Channel):
                 # 插入图片和发送者姓名
                 nick_name = cmsg.actual_user_nickname
                 paragraph = document.add_paragraph(nick_name)
-                run = paragraph.add_run()
+                run = paragraph.add_run(nick_name+"\n")
+                font = run.font
+                font.bold = True
                 run.add_picture(image_file_path)
                 
                 # 保存文档
