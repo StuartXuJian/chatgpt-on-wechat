@@ -173,7 +173,7 @@ class ChatChannel(Channel):
                 cmsg = context["msg"]
                 logger.debug("[WX] cmsg: {}".format(cmsg))
 
-                docx_file_path = 'record' + datetime.today().strftime('_%Y_%m_%d') + '.docx' 
+                docx_file_path = 'record/summary' + datetime.today().strftime('_%Y_%m_%d') + '.docx' 
                 image_file_path = context.content      # 替换为你的图片路径
                 # 创建或加载文档
                 if os.path.exists(docx_file_path):
