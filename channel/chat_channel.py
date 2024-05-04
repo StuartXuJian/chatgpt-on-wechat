@@ -185,8 +185,6 @@ class ChatChannel(Channel):
                 nick_name = str(cmsg.actual_user_nickname)
                 paragraph = document.add_paragraph(nick_name)
                 run = paragraph.add_run(nick_name+"\n")
-                font = run.font
-                font.bold = True
                 run.add_picture(image_file_path)
                 
                 # 保存文档
