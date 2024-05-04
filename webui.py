@@ -9,7 +9,7 @@ def list_files(directory):
 
 def update_file_list():
     """更新文件下拉列表"""
-    return gr.Dropdown(choices=files_list, label="选择文件")
+    return gr.Dropdown(choices=list_files("./record"), label="选择文件")
 
 def update_download_button(file_name):
     """根据用户选择的文件名，返回文件以供下载"""
