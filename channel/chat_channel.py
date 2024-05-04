@@ -170,7 +170,10 @@ class ChatChannel(Channel):
                 docx_file_path = 'record' + datetime.today().strftime('_%Y_%m_%d') + '.docx' 
                 image_file_path = context.content      # 替换为你的图片路径
                 # 创建或加载文档
-                document = Document(docx_file_path)
+                if os.path.exists(docx_file_path):
+                    document = Document(docx_file_path)
+                else:
+                    document = Document()
                 
                 # 插入图片
                 paragraph = document.add_paragraph()
