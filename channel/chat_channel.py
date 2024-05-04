@@ -18,7 +18,8 @@ except Exception as e:
     pass
 
 handler_pool = ThreadPoolExecutor(max_workers=8)  # 处理消息的线程池
-
+################## ################
+group_collect = True
 
 # 抽象类, 它包含了与消息通道无关的通用处理逻辑
 class ChatChannel(Channel):
@@ -95,6 +96,21 @@ class ChatChannel(Channel):
                 logger.debug(content)
                 logger.debug("[WX]reference query skipped")
                 return None
+            
+            ############ #############
+            
+            if context.content.startwith("#group_collect"):
+                logger.debug(f"[WX]wechat collect cmd: {content}")
+                if context.content == "#group_collect_resume":
+                    group_collect = True
+                    reply_str = "已恢复群收集"
+                elif context.content == "#group_collect_stop":
+                    group_collect = False
+                    reply_str = "已停止群聊收集"
+                elif content.content == "#group_collect_help":
+                    reply_str = "#group_collect_resume 恢复收集群信息/n#group_collect_stop 停止收集群信息/n#group_collect_help 显示帮助信息"
+                
+                return None
 
             nick_name_black_list = conf().get("nick_name_black_list", [])
             if context.get("isgroup", False):  # 群聊
@@ -159,10 +175,10 @@ class ChatChannel(Channel):
         elif context.type == ContextType.VOICE:
             if "desire_rtype" not in context and conf().get("voice_reply_voice") and ReplyType.VOICE not in self.NOT_SUPPORT_REPLYTYPE:
                 context["desire_rtype"] = ReplyType.VOICE
-        else:
+        else: ############# #############
             logger.debug("[WX]receive unsupported message type: {}, content: {}, context: {}".format(context.type, context.content, context))
             # 如果消息是图片,将文本存到当前IMG目录
-            if context.type == ContextType.IMAGE:
+            if context.type == ContextType.IMAGE and group_collect:
                 context.get("msg").prepare()
                 from docx import Document
                 from docx.shared import Inches
@@ -193,7 +209,9 @@ class ChatChannel(Channel):
                 # 保存文档
                 document.save(docx_file_path)
                 logger.debug(f"图片已成功插入到文档：{docx_file_path}")
-                # self._send_reply(context, f"已收录来自 {nick_name} 的图片!")
+                reply_str = f"已收录来自 {nick_name} 的图片!"
+                reply_tmp = Reply(ReplyType.TEXT, reply_str)
+                self._send_reply(context, reply_tmp)
 
                 # 删除临时图片
                 os.remove(image_file_path)
