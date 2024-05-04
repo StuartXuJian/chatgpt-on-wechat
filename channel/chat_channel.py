@@ -108,9 +108,9 @@ class ChatChannel(Channel):
                     self.group_collect = False
                     reply_str = "#group_collect_stop执行成功!\n已停止群聊收集"
                 elif "help" in context.content:
-                    reply_str = "#group_collect_resume 恢复收集群信息/n#group_collect_stop 停止收集群信息/n#group_collect_help 显示帮助信息"
+                    reply_str = "#group_collect_resume 恢复收集群信息\n#group_collect_stop 停止收集群信息\n#group_collect_help 显示帮助信息"
                 else:
-                    reply_str = f"你写了啥玩意呢, 识别不了! {context.content}"
+                    reply_str = f"你写了啥玩意呢, 识别不了!\n 你写的是{context.content}"
                 context.content = ""
                 reply_tmp = Reply(ReplyType.TEXT, reply_str)
                 self._send_reply(context, reply_tmp)
