@@ -107,8 +107,9 @@ class ChatChannel(Channel):
                 elif context.content == "#group_collect_stop":
                     self.group_collect = False
                     reply_str = "#group_collect_stop执行成功!\n已停止群聊收集"
-                elif content.content == "#group_collect_help":
+                elif context.content == "#group_collect_help":
                     reply_str = "#group_collect_resume 恢复收集群信息/n#group_collect_stop 停止收集群信息/n#group_collect_help 显示帮助信息"
+                context.content = ""
                 reply_tmp = Reply(ReplyType.TEXT, reply_str)
                 self._send_reply(context, reply_tmp)
                 return None
