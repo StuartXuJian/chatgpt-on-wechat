@@ -167,12 +167,11 @@ class ChatChannel(Channel):
                 from docx import Document
                 from datetime import datetime
 
-                # 仅接受群聊
-                if context.get("isgroup", True):
-                    return context
-
                 cmsg = context["msg"]
                 logger.debug("[WX] cmsg: {}".format(cmsg))
+                # 仅接受群聊
+                if not cmsg.is_group:
+                    return context
 
                 docx_file_path = 'record/summary' + datetime.today().strftime('_%Y_%m_%d') + '.docx' 
                 image_file_path = context.content      # 替换为你的图片路径
@@ -183,7 +182,7 @@ class ChatChannel(Channel):
                     document = Document()
                 
                 # 插入图片和发送者姓名
-                nick_name = cmsg.actual_user_nickname
+                nick_name = str(cmsg.actual_user_nickname)
                 paragraph = document.add_paragraph(nick_name)
                 run = paragraph.add_run(nick_name+"\n")
                 font = run.font
