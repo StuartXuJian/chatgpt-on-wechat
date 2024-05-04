@@ -99,7 +99,7 @@ class ChatChannel(Channel):
             
             ############ #############
             
-            if context.content.startswith("#group_collect"):
+            if "#group_collect" in context.content:
                 logger.debug(f"[WX]wechat collect cmd: {content}")
                 if context.content == "#group_collect_resume":
                     self.group_collect = True
