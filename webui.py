@@ -7,6 +7,10 @@ def list_files(directory):
     files = [f for f in os.listdir(directory) if os.path.isfile(os.path.join(directory, f))]
     return files
 
+def update_file_list():
+    """更新文件下拉列表"""
+    return gr.Dropdown(choices=files_list, label="选择文件")
+
 def update_download_button(file_name):
     """根据用户选择的文件名，返回文件以供下载"""
     file_path = os.path.join("./record", file_name)
@@ -23,10 +27,13 @@ def main():
     WEB_PORT = 18880
 
     with gr.Blocks(title=f"下载文件") as index:
+        with gr.Row():
+            file_dropdown=gr.Dropdown(choices=files_list, label="选择文件")
+        with gr.Row():
+            refresh_button = gr.Button(value="🔄 刷新文件列表")
+            download_button = gr.DownloadButton("📂 请选择文件...")
 
-        file_dropdown=gr.Dropdown(choices=files_list, label="选择文件")
-        download_button = gr.DownloadButton("📂 请选择文件...")
-
+        refresh_button.click(update_file_list, None, outputs=file_dropdown)
         file_dropdown.change(update_download_button, inputs=file_dropdown, outputs=download_button)
         
 
