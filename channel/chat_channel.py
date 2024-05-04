@@ -99,17 +99,18 @@ class ChatChannel(Channel):
             
             ############ #############
             
-            if context.content.startwith("#group_collect"):
+            if context.content.startswith("#group_collect"):
                 logger.debug(f"[WX]wechat collect cmd: {content}")
                 if context.content == "#group_collect_resume":
                     self.group_collect = True
-                    reply_str = "已恢复群收集"
+                    reply_str = "#group_collect_resume执行成功!\n已恢复群收集"
                 elif context.content == "#group_collect_stop":
                     self.group_collect = False
-                    reply_str = "已停止群聊收集"
+                    reply_str = "#group_collect_stop执行成功!\n已停止群聊收集"
                 elif content.content == "#group_collect_help":
                     reply_str = "#group_collect_resume 恢复收集群信息/n#group_collect_stop 停止收集群信息/n#group_collect_help 显示帮助信息"
-                
+                reply_tmp = Reply(ReplyType.TEXT, reply_str)
+                self._send_reply(context, reply_tmp)
                 return None
 
             nick_name_black_list = conf().get("nick_name_black_list", [])
@@ -209,7 +210,7 @@ class ChatChannel(Channel):
                 # 保存文档
                 document.save(docx_file_path)
                 logger.debug(f"图片已成功插入到文档：{docx_file_path}")
-                reply_str = f"已收录来自 {nick_name} 的图片!"
+                reply_str = f"已收录来自 @{nick_name} 的图片!"
                 reply_tmp = Reply(ReplyType.TEXT, reply_str)
                 self._send_reply(context, reply_tmp)
 
