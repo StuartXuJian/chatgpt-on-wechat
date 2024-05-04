@@ -160,12 +160,18 @@ class ChatChannel(Channel):
             if "desire_rtype" not in context and conf().get("voice_reply_voice") and ReplyType.VOICE not in self.NOT_SUPPORT_REPLYTYPE:
                 context["desire_rtype"] = ReplyType.VOICE
         else:
-            logger.info("[WX]receive unsupported message type: {}, content: {}, context: {}".format(context.type, context.content, context))
+            logger.debug("[WX]receive unsupported message type: {}, content: {}, context: {}".format(context.type, context.content, context))
             # 如果消息是图片,将文本存到当前IMG目录
             if context.type == ContextType.IMAGE:
                 context.get("msg").prepare()
                 from docx import Document
                 from datetime import datetime
+
+                # if context.get("isgroup", False):
+                #     return context
+
+                cmsg = context["msg"]
+                logger.debug("[WX] cmsg: {}".format(cmsg))
 
                 docx_file_path = 'record' + datetime.today().strftime('_%Y_%m_%d') + '.docx' 
                 image_file_path = context.content      # 替换为你的图片路径
@@ -175,14 +181,18 @@ class ChatChannel(Channel):
                 else:
                     document = Document()
                 
-                # 插入图片
+                # 插入图片和发送者姓名
+                nick_name = cmsg.from_user_nickname
                 paragraph = document.add_paragraph()
-                run = paragraph.add_run()
-                run.add_picture(image_file_path)  # 设置图片宽度为1.25英寸
+                run = paragraph.add_run(nick_name)
+                run.add_picture(image_file_path)
+                font = run.font
+                font.bold = True 
                 
                 # 保存文档
                 document.save(docx_file_path)
-                logger.info(f"图片已成功插入到文档：{docx_file_path}")
+                logger.debug(f"图片已成功插入到文档：{docx_file_path}")
+                self._send_reply(context, f"已收录来自 {nick_name} 的图片")
 
                 # 删除临时图片
                 os.remove(image_file_path)
