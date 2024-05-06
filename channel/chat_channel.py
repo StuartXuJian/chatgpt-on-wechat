@@ -115,7 +115,7 @@ class ChatChannel(Channel):
                     self.collect_report = True
                     reply_str = "大人英明! 我言论自由了!"
                 elif "help" in context.content:
-                    status_str = "收集状态: 未开启" if not self.collect_report else "收集状态: 开启中"
+                    status_str = "收集状态: 未开启" if not self.group_collect else "收集状态: 开启中"
                     reply_str = "#group_collect_resume 恢复收集群信息\n#group_collect_stop 停止收集群信息\n#group_collect_help 显示帮助信息\n#group_collect_闭嘴 不播报收集记录\n#group_collect_开口 播报收集记录" + "\n" + status_str
                 else:
                     reply_str = f"你写了啥玩意呢, 识别不了!\n 你写的是{context.content}"
