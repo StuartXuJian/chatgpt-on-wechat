@@ -17,10 +17,14 @@ def update_download_button(file_name):
     return gr.DownloadButton("📂 点击下载", value=file_path)
 
 def delete_file(file_name):
+    if file_name is None:
+        return gr.Dropdown(choices=list_files("./record"), label="选择文件")
+    
     if not os.path.exists(file_name):
         return gr.Dropdown(choices=list_files("./record"), value="选择文件")
     
     """删除文件"""
+    print(file_name)
     file_path = os.path.join("./record", file_name)
     os.remove(file_path)
     return gr.Dropdown(choices=list_files("./record"), label="选择文件")
