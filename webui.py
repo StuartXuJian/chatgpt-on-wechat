@@ -16,6 +16,15 @@ def update_download_button(file_name):
     file_path = os.path.join("./record", file_name)
     return gr.DownloadButton("📂 点击下载", value=file_path)
 
+def delete_file(file_name):
+    if not os.path.exists(file_name):
+        return gr.Dropdown(choices=list_files("./record"), value="选择文件")
+    
+    """删除文件"""
+    file_path = os.path.join("./record", file_name)
+    os.remove(file_path)
+    return gr.Dropdown(choices=list_files("./record"), label="选择文件")
+
 def main():
     # 确保'./record'目录存在
     if not os.path.exists("./record"):
@@ -32,9 +41,11 @@ def main():
         with gr.Row():
             refresh_button = gr.Button(value="🔄 刷新文件列表")
             download_button = gr.DownloadButton("📂 请选择文件...")
+            delete_button = gr.Button(value="❌ 删除文件")
 
         refresh_button.click(update_file_list, None, outputs=file_dropdown)
         file_dropdown.change(update_download_button, inputs=file_dropdown, outputs=download_button)
+        delete_button.click(delete_file, inputs=file_dropdown, outputs=file_dropdown)
         
 
     print(f"http://localhost:{WEB_PORT} Started...")
